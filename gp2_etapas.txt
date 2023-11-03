@@ -1,0 +1,42 @@
+-- Table public.gp2_etapas
+
+-- DROP TABLE IF EXISTS public.gp2_etapas;
+
+CREATE TABLE IF NOT EXISTS public.gp2_etapas
+(
+    id_etapa integer NOT NULL DEFAULT nextval('gp2_etapas_id_etapa_seq'regclass),
+    id_grupo integer NOT NULL,
+    nome_etapa character varying(50) COLLATE pg_catalog.default NOT NULL,
+    peso integer NOT NULL,
+    porcentagem numeric(5,2) NOT NULL DEFAULT 0,
+    descricao_etapa character varying(500) COLLATE pg_catalog.default,
+    status integer,
+    prioridade integer,
+    ordenador integer,
+    responsavel character varying(150) COLLATE pg_catalog.default,
+    email_responsavel character varying(256) COLLATE pg_catalog.default,
+    impedimento boolean DEFAULT false,
+    descricao_impedimento character varying(500) COLLATE pg_catalog.default,
+    data_criacao date NOT NULL,
+    data_atualizacao timestamp without time zone,
+    atualizador integer,
+    excluido boolean DEFAULT false,
+    CONSTRAINT gp2_etapas_pkey PRIMARY KEY (id_etapa),
+    CONSTRAINT gp2_etapas_atualizador_fkey FOREIGN KEY (atualizador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_etapas_id_grupo_fkey FOREIGN KEY (id_grupo)
+        REFERENCES public.gp2_grupos_etapas (id_grupo) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_etapas_status_fkey FOREIGN KEY (status)
+        REFERENCES public.gp2_status (id_status) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_etapas
+    OWNER to projetoscti9;

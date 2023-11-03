@@ -1,0 +1,24 @@
+-- Table: public.gp2_seguidores
+
+-- DROP TABLE IF EXISTS public.gp2_seguidores;
+
+CREATE TABLE IF NOT EXISTS public.gp2_seguidores
+(
+    id_seguidor integer NOT NULL,
+    id_seguido integer NOT NULL,
+    data_inicio_seguindo date NOT NULL,
+    CONSTRAINT gp2_seguidores_pkey PRIMARY KEY (id_seguidor, id_seguido),
+    CONSTRAINT gp2_seguidores_id_seguido_fkey FOREIGN KEY (id_seguido)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_seguidores_id_seguidor_fkey FOREIGN KEY (id_seguidor)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_seguidores
+    OWNER to projetoscti9;

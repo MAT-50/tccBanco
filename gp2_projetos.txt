@@ -1,0 +1,45 @@
+-- Table: public.gp2_projetos
+
+-- DROP TABLE IF EXISTS public.gp2_projetos;
+
+CREATE TABLE IF NOT EXISTS public.gp2_projetos
+(
+    id_projeto integer NOT NULL DEFAULT nextval('gp2_projetos_id_projeto_seq'::regclass),
+    id_criador integer NOT NULL,
+    autores character varying(150) COLLATE pg_catalog."default",
+    email_contato character varying(256) COLLATE pg_catalog."default",
+    nome_projeto character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    palavras_chave character varying(500) COLLATE pg_catalog."default",
+    publico boolean DEFAULT false,
+    descricao_breve character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    descricao_detalhada text COLLATE pg_catalog."default",
+    link_site character varying(200) COLLATE pg_catalog."default",
+    link_youtube character varying(50) COLLATE pg_catalog."default",
+    status integer,
+    porcentagem numeric(5,2) DEFAULT 0,
+    data_criacao date NOT NULL,
+    data_atualizacao timestamp without time zone,
+    atualizador integer,
+    excluido boolean DEFAULT false,
+    linguagem character varying(100) COLLATE pg_catalog."default",
+    previsao date,
+    num_grupos integer,
+    CONSTRAINT gp2_projetos_pkey PRIMARY KEY (id_projeto),
+    CONSTRAINT gp2_projetos_atualizador_fkey FOREIGN KEY (atualizador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_projetos_id_criador_fkey FOREIGN KEY (id_criador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_projetos_status_fkey FOREIGN KEY (status)
+        REFERENCES public.gp2_status (id_status) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_projetos
+    OWNER to projetoscti9;

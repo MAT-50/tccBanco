@@ -1,0 +1,15 @@
+-- Table: public.gp2_status
+
+-- DROP TABLE IF EXISTS public.gp2_status;
+
+CREATE TABLE IF NOT EXISTS public.gp2_status
+(
+    id_status integer NOT NULL DEFAULT nextval('gp2_status_id_status_seq'::regclass),
+    status character varying(25) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT gp2_status_pkey PRIMARY KEY (id_status)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_status
+    OWNER to projetoscti9;

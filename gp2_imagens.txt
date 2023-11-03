@@ -1,0 +1,23 @@
+-- Table: public.gp2_imagens
+
+-- DROP TABLE IF EXISTS public.gp2_imagens;
+
+CREATE TABLE IF NOT EXISTS public.gp2_imagens
+(
+    id_imagem integer NOT NULL DEFAULT nextval('gp2_imagens_id_imagem_seq'::regclass),
+    id_projeto integer NOT NULL,
+    diretorio character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    nome character varying(40) COLLATE pg_catalog."default" NOT NULL,
+    descricao_imagem character varying(300) COLLATE pg_catalog."default" NOT NULL,
+    imagem_principal boolean NOT NULL DEFAULT false,
+    CONSTRAINT gp2_imagens_pkey PRIMARY KEY (id_imagem),
+    CONSTRAINT gp2_imagens_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_imagens
+    OWNER to projetoscti9;

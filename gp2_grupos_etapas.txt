@@ -1,0 +1,25 @@
+-- Table: public.gp2_grupos_etapas
+
+-- DROP TABLE IF EXISTS public.gp2_grupos_etapas;
+
+CREATE TABLE IF NOT EXISTS public.gp2_grupos_etapas
+(
+    id_grupo integer NOT NULL DEFAULT nextval('gp2_grupos_etapas_id_grupo_seq'::regclass),
+    id_projeto integer NOT NULL,
+    nome_grupo character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    porcentagem numeric(5,2) NOT NULL,
+    mostrar_porcentagem boolean NOT NULL,
+    ordenador integer NOT NULL,
+    excluido boolean NOT NULL DEFAULT false,
+    num_etapas integer NOT NULL,
+    CONSTRAINT gp2_grupos_etapas_pkey PRIMARY KEY (id_grupo),
+    CONSTRAINT gp2_etapas_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_grupos_etapas
+    OWNER to projetoscti9;

@@ -1,0 +1,26 @@
+-- Table: public.gp2_usuarios
+
+-- DROP TABLE IF EXISTS public.gp2_usuarios;
+
+CREATE TABLE IF NOT EXISTS public.gp2_usuarios
+(
+    id_usuario integer NOT NULL DEFAULT nextval('gp2_usuarios_id_usuario_seq'::regclass),
+    nome character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    bio character varying(160) COLLATE pg_catalog."default",
+    avatar bigint,
+    naturalidade character varying(30) COLLATE pg_catalog."default",
+    nascimento date,
+    inscricao date NOT NULL DEFAULT now(),
+    email character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    senha character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(25) COLLATE pg_catalog."default",
+    commits bigint,
+    excluido boolean DEFAULT false,
+    CONSTRAINT gp2_usuarios_pkey PRIMARY KEY (id_usuario),
+    CONSTRAINT constraint_email_unico UNIQUE (email)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_usuarios
+    OWNER to projetoscti9;

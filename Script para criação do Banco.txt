@@ -1,0 +1,168 @@
+CREATE TABLE IF NOT EXISTS public.gp2_usuarios
+(
+    id_usuario integer NOT NULL DEFAULT nextval('gp2_usuarios_id_usuario_seq'::regclass),
+    nome character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    bio character varying(160) COLLATE pg_catalog."default",
+    avatar bigint,
+    naturalidade character varying(30) COLLATE pg_catalog."default",
+    nascimento date,
+    inscricao date NOT NULL DEFAULT now(),
+    email character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    senha character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(25) COLLATE pg_catalog."default",
+    commits bigint,
+    excluido boolean DEFAULT false,
+    CONSTRAINT gp2_usuarios_pkey PRIMARY KEY (id_usuario),
+    CONSTRAINT constraint_email_unico UNIQUE (email)
+)
+
+
+CREATE TABLE IF NOT EXISTS public.gp2_status
+(
+    id_status integer NOT NULL DEFAULT nextval('gp2_status_id_status_seq'::regclass),
+    status character varying(25) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT gp2_status_pkey PRIMARY KEY (id_status)
+)
+
+CREATE TABLE IF NOT EXISTS public.gp2_projetos
+(
+    id_projeto integer NOT NULL DEFAULT nextval('gp2_projetos_id_projeto_seq'::regclass),
+    id_criador integer NOT NULL,
+    autores character varying(150) COLLATE pg_catalog."default",
+    email_contato character varying(256) COLLATE pg_catalog."default",
+    nome_projeto character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    palavras_chave character varying(500) COLLATE pg_catalog."default",
+    publico boolean DEFAULT false,
+    descricao_breve character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    descricao_detalhada text COLLATE pg_catalog."default",
+    link_site character varying(200) COLLATE pg_catalog."default",
+    link_youtube character varying(50) COLLATE pg_catalog."default",
+    status integer,
+    porcentagem numeric(5,2) DEFAULT 0,
+    data_criacao date NOT NULL,
+    data_atualizacao timestamp without time zone,
+    atualizador integer,
+    excluido boolean DEFAULT false,
+    linguagem character varying(100) COLLATE pg_catalog."default",
+    previsao date,
+    num_grupos integer,
+    CONSTRAINT gp2_projetos_pkey PRIMARY KEY (id_projeto),
+    CONSTRAINT gp2_projetos_atualizador_fkey FOREIGN KEY (atualizador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_projetos_id_criador_fkey FOREIGN KEY (id_criador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_projetos_status_fkey FOREIGN KEY (status)
+        REFERENCES public.gp2_status (id_status) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.gp2_seguidores
+(
+    id_seguidor integer NOT NULL,
+    id_seguido integer NOT NULL,
+    data_inicio_seguindo date NOT NULL,
+    CONSTRAINT gp2_seguidores_pkey PRIMARY KEY (id_seguidor, id_seguido),
+    CONSTRAINT gp2_seguidores_id_seguido_fkey FOREIGN KEY (id_seguido)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_seguidores_id_seguidor_fkey FOREIGN KEY (id_seguidor)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.gp2_colaboradores
+(
+    id_colaborador integer NOT NULL,
+    id_projeto integer NOT NULL,
+    colaborador_adm boolean NOT NULL DEFAULT false,
+    CONSTRAINT gp2_colaboradores_pkey PRIMARY KEY (id_colaborador, id_projeto),
+    CONSTRAINT gp2_colaboradores_id_colaborador_fkey FOREIGN KEY (id_colaborador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_colaboradores_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+CREATE TABLE IF NOT EXISTS public.gp2_imagens
+(
+    id_imagem integer NOT NULL DEFAULT nextval('gp2_imagens_id_imagem_seq'::regclass),
+    id_projeto integer NOT NULL,
+    diretorio character varying(200) COLLATE pg_catalog."default" NOT NULL,
+    nome character varying(40) COLLATE pg_catalog."default" NOT NULL,
+    descricao_imagem character varying(300) COLLATE pg_catalog."default" NOT NULL,
+    imagem_principal boolean NOT NULL DEFAULT false,
+    CONSTRAINT gp2_imagens_pkey PRIMARY KEY (id_imagem),
+    CONSTRAINT gp2_imagens_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+CREATE TABLE IF NOT EXISTS public.gp2_grupos_etapas
+(
+    id_grupo integer NOT NULL DEFAULT nextval('gp2_grupos_etapas_id_grupo_seq'::regclass),
+    id_projeto integer NOT NULL,
+    nome_grupo character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    porcentagem numeric(5,2) NOT NULL,
+    mostrar_porcentagem boolean NOT NULL,
+    ordenador integer NOT NULL,
+    excluido boolean NOT NULL DEFAULT false,
+    num_etapas integer NOT NULL,
+    CONSTRAINT gp2_grupos_etapas_pkey PRIMARY KEY (id_grupo),
+    CONSTRAINT gp2_etapas_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+
+CREATE TABLE IF NOT EXISTS public.gp2_etapas
+(
+    id_etapa integer NOT NULL DEFAULT nextval('gp2_etapas_id_etapa_seq'::regclass),
+    id_grupo integer NOT NULL,
+    nome_etapa character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    peso integer NOT NULL,
+    porcentagem numeric(5,2) NOT NULL DEFAULT 0,
+    descricao_etapa character varying(500) COLLATE pg_catalog."default",
+    status integer,
+    prioridade integer,
+    ordenador integer,
+    responsavel character varying(150) COLLATE pg_catalog."default",
+    email_responsavel character varying(256) COLLATE pg_catalog."default",
+    impedimento boolean DEFAULT false,
+    descricao_impedimento character varying(500) COLLATE pg_catalog."default",
+    data_criacao date NOT NULL,
+    data_atualizacao timestamp without time zone,
+    atualizador integer,
+    excluido boolean DEFAULT false,
+    CONSTRAINT gp2_etapas_pkey PRIMARY KEY (id_etapa),
+    CONSTRAINT gp2_etapas_atualizador_fkey FOREIGN KEY (atualizador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_etapas_id_grupo_fkey FOREIGN KEY (id_grupo)
+        REFERENCES public.gp2_grupos_etapas (id_grupo) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_etapas_status_fkey FOREIGN KEY (status)
+        REFERENCES public.gp2_status (id_status) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_etapas
+    OWNER to projetoscti9;

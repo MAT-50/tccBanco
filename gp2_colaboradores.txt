@@ -1,0 +1,24 @@
+-- Table: public.gp2_colaboradores
+
+-- DROP TABLE IF EXISTS public.gp2_colaboradores;
+
+CREATE TABLE IF NOT EXISTS public.gp2_colaboradores
+(
+    id_colaborador integer NOT NULL,
+    id_projeto integer NOT NULL,
+    colaborador_adm boolean NOT NULL DEFAULT false,
+    CONSTRAINT gp2_colaboradores_pkey PRIMARY KEY (id_colaborador, id_projeto),
+    CONSTRAINT gp2_colaboradores_id_colaborador_fkey FOREIGN KEY (id_colaborador)
+        REFERENCES public.gp2_usuarios (id_usuario) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT gp2_colaboradores_id_projeto_fkey FOREIGN KEY (id_projeto)
+        REFERENCES public.gp2_projetos (id_projeto) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.gp2_colaboradores
+    OWNER to projetoscti9;
